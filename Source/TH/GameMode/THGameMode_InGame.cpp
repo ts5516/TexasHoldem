@@ -62,7 +62,13 @@ void ATHGameMode_InGame::Tick(float DeltaSeconds)
 	{
 		ProcessByRoundStage();
 
-		SetbIsThePlayerBetting(true);
+		if (GetRoundStage() == RoundStage::Flop 
+			|| GetRoundStage() == RoundStage::PreFlop
+			|| GetRoundStage() == RoundStage::Turn 
+			|| GetRoundStage() == RoundStage::River)
+		{
+			SetbIsThePlayerBetting(true);
+		}
 	}
 }
 
@@ -165,13 +171,9 @@ void ATHGameMode_InGame::StartBetting()
 
 void ATHGameMode_InGame::ProcessByRoundStage()
 {
-	if (GetRoundStage() == RoundStage::None)
+	if (GetRoundStage() == RoundStage::PreFlop)
 	{
-		return;
-	}
-	else if (GetRoundStage() == RoundStage::PreFlop)
-	{
-		//_GetGameState()->RoundInitTime = 30;
+		_GetGameState()->RoundInitTime = 15;
 		RoundCount++;
 		UE_LOG(LogTemp, Log, TEXT("Round %d Start"), RoundCount);
 		_GetGameState()->SetPlayerRoles();
@@ -209,7 +211,6 @@ void ATHGameMode_InGame::ProcessByRoundStage()
 		_GetGameState()->RoundTimerStart();
 
 		UE_LOG(LogTemp, Log, TEXT("Round %d End"), RoundCount);
-		return;
 	}
 	else if (GetRoundStage() == RoundStage::Waiting)
 	{
@@ -227,9 +228,6 @@ void ATHGameMode_InGame::ProcessByRoundStage()
 				GoNextRoundStage();
 			}
 		}
-
-
-		return;
 	}
 
 }
